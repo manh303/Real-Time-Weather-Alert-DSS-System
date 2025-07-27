@@ -1,0 +1,360 @@
+import os
+import json
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+class WeatherConfig:
+    # API Configuration
+    OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY')
+    OPENWEATHER_BASE_URL = os.getenv('OPENWEATHER_BASE_URL', 'http://api.openweathermap.org/data/2.5/weather')
+    
+    # Kafka Configuration
+    KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
+    KAFKA_TOPIC_WEATHER = os.getenv('KAFKA_TOPIC_WEATHER', 'weather_data')
+    KAFKA_TOPIC_ALERTS = os.getenv('KAFKA_TOPIC_ALERTS', 'weather_alerts')
+    
+    # Alert Thresholds
+    TEMPERATURE_THRESHOLD = float(os.getenv('TEMPERATURE_THRESHOLD', 37))
+    HUMIDITY_THRESHOLD = float(os.getenv('HUMIDITY_THRESHOLD', 25))
+    WIND_SPEED_THRESHOLD = float(os.getenv('WIND_SPEED_THRESHOLD', 50))
+    
+    # Request Configuration
+    REQUEST_TIMEOUT = 30
+    MAX_RETRIES = 3
+    RETRY_DELAY = 5
+
+class KafkaConfig:
+    PRODUCER_CONFIG = {
+        'bootstrap_servers': os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092').split(','),
+        'client_id': 'weather-producer',
+        'value_serializer': lambda v: json.dumps(v, ensure_ascii=False).encode('utf-8'),
+        'key_serializer': lambda k: k.encode('utf-8') if k else None,
+        'acks': 'all',
+        'retries': 3,
+        'retry_backoff_ms': 1000,
+        'batch_size': 16384,
+        'linger_ms': 10,
+        'buffer_memory': 33554432,
+        'connections_max_idle_ms': 540000
+    }
+
+# Vietnam provinces data (Fixed - removed duplicate array)
+VIETNAM_PROVINCES = [
+    {
+        "name": "Hà Nội",
+        "lat": 21.0285,
+        "lon": 105.8542
+    },
+    {
+        "name": "TP. Hồ Chí Minh",
+        "lat": 10.762622,
+        "lon": 106.660172
+    },
+    {
+        "name": "Đà Nẵng",
+        "lat": 16.047079,
+        "lon": 108.20623
+    },
+    {
+        "name": "Hải Phòng",
+        "lat": 20.844911,
+        "lon": 106.688084
+    },
+    {
+        "name": "Cần Thơ",
+        "lat": 10.045162,
+        "lon": 105.746857
+    },
+    {
+        "name": "An Giang",
+        "lat": 10.521583,
+        "lon": 105.125895
+    },
+    {
+        "name": "Bà Rịa - Vũng Tàu",
+        "lat": 10.541739,
+        "lon": 107.242997
+    },
+    {
+        "name": "Bắc Giang",
+        "lat": 21.281992,
+        "lon": 106.197476
+    },
+    {
+        "name": "Bắc Kạn",
+        "lat": 22.147146,
+        "lon": 105.834763
+    },
+    {
+        "name": "Bạc Liêu",
+        "lat": 9.285489,
+        "lon": 105.724001
+    },
+    {
+        "name": "Bắc Ninh",
+        "lat": 21.186083,
+        "lon": 106.07643
+    },
+    {
+        "name": "Bến Tre",
+        "lat": 10.243355,
+        "lon": 106.375542
+    },
+    {
+        "name": "Bình Dương",
+        "lat": 11.064722,
+        "lon": 106.6725
+    },
+    {
+        "name": "Bình Định",
+        "lat": 13.782222,
+        "lon": 109.219167
+    },
+    {
+        "name": "Bình Phước",
+        "lat": 11.7512,
+        "lon": 106.7235
+    },
+    {
+        "name": "Bình Thuận",
+        "lat": 11.09037,
+        "lon": 108.07208
+    },
+    {
+        "name": "Cà Mau",
+        "lat": 9.176796,
+        "lon": 105.150282
+    },
+    {
+        "name": "Cao Bằng",
+        "lat": 22.665682,
+        "lon": 106.257019
+    },
+    {
+        "name": "Đắk Lắk",
+        "lat": 12.6675,
+        "lon": 108.0378
+    },
+    {
+        "name": "Đắk Nông",
+        "lat": 12.27603,
+        "lon": 107.60981
+    },
+    {
+        "name": "Điện Biên",
+        "lat": 21.397441,
+        "lon": 103.016378
+    },
+    {
+        "name": "Đồng Nai",
+        "lat": 10.94587,
+        "lon": 106.82464
+    },
+    {
+        "name": "Đồng Tháp",
+        "lat": 10.4541,
+        "lon": 105.6324
+    },
+    {
+        "name": "Gia Lai",
+        "lat": 13.807894,
+        "lon": 108.109375
+    },
+    {
+        "name": "Hà Giang",
+        "lat": 22.8233,
+        "lon": 104.98357
+    },
+    {
+        "name": "Hà Nam",
+        "lat": 20.5834,
+        "lon": 105.92299
+    },
+    {
+        "name": "Hà Tĩnh",
+        "lat": 18.3428,
+        "lon": 105.9057
+    },
+    {
+        "name": "Hải Dương",
+        "lat": 20.9373,
+        "lon": 106.3135
+    },
+    {
+        "name": "Hậu Giang",
+        "lat": 9.7579,
+        "lon": 105.641
+    },
+    {
+        "name": "Hòa Bình",
+        "lat": 20.8514,
+        "lon": 105.3376
+    },
+    {
+        "name": "Hưng Yên",
+        "lat": 20.6461,
+        "lon": 106.0511
+    },
+    {
+        "name": "Khánh Hòa",
+        "lat": 12.257,
+        "lon": 109.052
+    },
+    {
+        "name": "Kiên Giang",
+        "lat": 10.0124,
+        "lon": 105.0809
+    },
+    {
+        "name": "Kon Tum",
+        "lat": 14.35,
+        "lon": 108.0
+    },
+    {
+        "name": "Lai Châu",
+        "lat": 22.3932,
+        "lon": 103.451
+    },
+    {
+        "name": "Lâm Đồng",
+        "lat": 11.9404,
+        "lon": 108.4583
+    },
+    {
+        "name": "Lạng Sơn",
+        "lat": 21.8478,
+        "lon": 106.758
+    },
+    {
+        "name": "Lào Cai",
+        "lat": 22.4853,
+        "lon": 103.9706
+    },
+    {
+        "name": "Long An",
+        "lat": 10.5353,
+        "lon": 106.4137
+    },
+    {
+        "name": "Nam Định",
+        "lat": 20.4388,
+        "lon": 106.1621
+    },
+    {
+        "name": "Nghệ An",
+        "lat": 19.2342,
+        "lon": 104.9205
+    },
+    {
+        "name": "Ninh Bình",
+        "lat": 20.2506,
+        "lon": 105.974
+    },
+    {
+        "name": "Ninh Thuận",
+        "lat": 11.6188,
+        "lon": 108.986
+    },
+    {
+        "name": "Phú Thọ",
+        "lat": 21.3197,
+        "lon": 105.3131
+    },
+    {
+        "name": "Phú Yên",
+        "lat": 13.0882,
+        "lon": 109.0929
+    },
+    {
+        "name": "Quảng Bình",
+        "lat": 17.4689,
+        "lon": 106.6223
+    },
+    {
+        "name": "Quảng Nam",
+        "lat": 15.5393,
+        "lon": 108.0191
+    },
+    {
+        "name": "Quảng Ngãi",
+        "lat": 15.1214,
+        "lon": 108.804
+    },
+    {
+        "name": "Quảng Ninh",
+        "lat": 21.0064,
+        "lon": 107.2929
+    },
+    {
+        "name": "Quảng Trị",
+        "lat": 16.7462,
+        "lon": 107.1851
+    },
+    {
+        "name": "Sóc Trăng",
+        "lat": 9.602,
+        "lon": 105.9739
+    },
+    {
+        "name": "Sơn La",
+        "lat": 21.3256,
+        "lon": 103.918
+    },
+    {
+        "name": "Tây Ninh",
+        "lat": 11.3654,
+        "lon": 106.0983
+    },
+    {
+        "name": "Thái Bình",
+        "lat": 20.4463,
+        "lon": 106.3365
+    },
+    {
+        "name": "Thái Nguyên",
+        "lat": 21.5942,
+        "lon": 105.8488
+    },
+    {
+        "name": "Thanh Hóa",
+        "lat": 19.8067,
+        "lon": 105.7855
+    },
+    {
+        "name": "Thừa Thiên Huế",
+        "lat": 16.4637,
+        "lon": 107.5909
+    },
+    {
+        "name": "Tiền Giang",
+        "lat": 10.3965,
+        "lon": 106.3439
+    },
+    {
+        "name": "Trà Vinh",
+        "lat": 9.8127,
+        "lon": 106.345
+    },
+    {
+        "name": "Tuyên Quang",
+        "lat": 21.8192,
+        "lon": 105.218
+    },
+    {
+        "name": "Vĩnh Long",
+        "lat": 10.2538,
+        "lon": 105.9734
+    },
+    {
+        "name": "Vĩnh Phúc",
+        "lat": 21.3089,
+        "lon": 105.6049
+    },
+    {
+        "name": "Yên Bái",
+        "lat": 21.7051,
+        "lon": 104.8721
+    }
+]

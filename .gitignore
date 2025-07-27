@@ -16,13 +16,20 @@ env.bak/
 env/
 
 # Airflow logs, temp files, and configs
+# Loại trừ các folder log, db, backup, data tạm
 airflow/logs/
 airflow/tmp/
-airflow/.airflow.db
-airflow/unittests.cfg
-airflow/airflow.cfg
-airflow/webserver_config.py
-
+docker/airflow/logs/
+docker/airflow/tmp/
+docker/airflow/logs/scheduler/
+docker/airflow/logs/scheduler/latest
+data/
+data/db/
+data/db/*
+*.db
+*.lock
+*.log
+*.turtle
 # Local Airflow DBs
 *.sqlite
 *.db
