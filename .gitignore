@@ -1,0 +1,59 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cython debug symbols
+cython_debug/
+
+# Environment
+.env
+.env.*
+.venv/
+venv/
+ENV/
+env.bak/
+env/
+
+# Airflow logs, temp files, and configs
+airflow/logs/
+airflow/tmp/
+airflow/.airflow.db
+airflow/unittests.cfg
+airflow/airflow.cfg
+airflow/webserver_config.py
+
+# Local Airflow DBs
+*.sqlite
+*.db
+
+# DAG serialization
+airflow/dags/__pycache__/
+airflow/plugins/__pycache__/
+
+# Docker related
+**/docker-compose.override.yml
+**/docker-compose.local.yml
+**/docker-compose-dev.yml
+**/docker-compose-debug.yml
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# VSCode, PyCharm, OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.swp
+*~
+
+# Test/output folders
+output/
+tests/__pycache__/
+
+# Git
+.git/
